@@ -6,8 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 
 [BepInPlugin(
-    "com.stereotypicaldweeb.hitstopmusicsync",
-    "Hitstop Music Sync",
+    "com.n4pstr.hitstopmusicsync",
+    "Hitstop Music Sync (Supersonic)",
     "1.0.0"
 )]
 public class hitstopmusicsync : BaseUnityPlugin
@@ -16,23 +16,23 @@ public class hitstopmusicsync : BaseUnityPlugin
 
     private void Awake()
     {
-        harmony = new Harmony("com.stereotypicaldweeb.hitstopmusicsync");
+        harmony = new Harmony("com.n4pstr.hitstopmusicsync");
         harmony.PatchAll();
     }
 }
 
 
-public static class SpotifyMuter
+public static class SupersonicMuter
 {
     private static float previousVolume = -1f;
     private static bool isMuted = false;
 
     public static void Toggle()
     {
-        var spotifyProcess = Process.GetProcessesByName("Spotify").FirstOrDefault();
-        if (spotifyProcess == null) { 
+        var supersonicProcess = Process.GetProcessesByName("Supersonic").FirstOrDefault();
+        if (supersonicProcess == null) { 
             var logSource = Logger.CreateLogSource("HitstopMusicSync");
-            logSource.LogError("Spotify not found! Is it open?");
+            logSource.LogError("Supersonic not found! Is it open?");
             return;
         }
 
@@ -43,7 +43,7 @@ public static class SpotifyMuter
         for (int i = 0; i < sessions.Count; i++)
         {
             var session = sessions[i];
-            if (session.GetProcessID == spotifyProcess.Id)
+            if (session.GetProcessID == supersonicProcess.Id)
             {
                 if (!isMuted)
                 {
@@ -75,7 +75,7 @@ public static class HitstopStartPatch
 
         if (!MusicState.PausedByMod)
         {
-            SpotifyMuter.Toggle();
+            SupersonicMuter.Toggle();
             MusicState.PausedByMod = true;
         }
     }
@@ -90,7 +90,7 @@ public static class HitstopEndPatch
     {
         if (MusicState.PausedByMod)
         {
-            SpotifyMuter.Toggle();
+            SupersonicMuter.Toggle();
             MusicState.PausedByMod = false;
         }
     }
